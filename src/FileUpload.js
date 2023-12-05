@@ -1,21 +1,31 @@
-import React, { useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
-import './App.css';
+import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const FileUpload = ({ onFileUpload }) => {
-  const onDrop = useCallback((acceptedFiles) => {
-    const file = acceptedFiles[0];
-    onFileUpload(file);
-  }, [onFileUpload]);
+const UploadCV = ({ onUpload }) => {
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+  };
+
+  const handleUpload = () => {
+    // Ensure a file is selected before attempting to upload
+    if (selectedFile) {
+      // Call the onUpload callback with the selected file
+      onUpload(selectedFile);
+    } else {
+      console.error('No file selected for upload.');
+    }
+  };
 
   return (
-    <div {...getRootProps()} className='fileupload-container'>
-      <input {...getInputProps()} />
-      <p>Drag 'n' drop a CV file here, or click to select one</p>
+    <div>
+      <input type="file" onChange={handleFileChange} />
+      <Button variant='primary' onClick={handleUpload}>Upload CV</Button>
     </div>
   );
 };
 
-export default FileUpload;
+export default UploadCV;
