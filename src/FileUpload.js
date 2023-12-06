@@ -1,31 +1,54 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
 
-const UploadCV = ({ onUpload }) => {
-  const [selectedFile, setSelectedFile] = useState(null);
+const FileUpload = () => {
+  const [file, setFile] = useState(null);
+  const [matchedSkills, setMatchedSkills] = useState([]);
+  const [percentage, setPercentage] = useState(null);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedFile(file);
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
   };
 
-  const handleUpload = () => {
-    // Ensure a file is selected before attempting to upload
-    if (selectedFile) {
-      // Call the onUpload callback with the selected file
-      onUpload(selectedFile);
-    } else {
-      console.error('No file selected for upload.');
+  const handleUpload = async () => {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+        const response = await axios.post('http://localhost:5000/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      const { matchedSkills, percentage } = response.data;
+      setMatchedSkills(matchedSkills);
+      setPercentage(percentage);
+
+      console.log('Server Response:', response.data);
+    } catch (error) {
+      console.error('Error uploading file:', error);
     }
   };
 
   return (
     <div>
       <input type="file" onChange={handleFileChange} />
-      <Button variant='primary' onClick={handleUpload}>Upload CV</Button>
+      <Button onClick={handleUpload}>Upload</Button>
+
+      {matchedSkills.length > 0 && (
+        <div>
+          <h3>Matched Skills:</h3>
+          <ul>
+            {matchedSkills.map((skill, index) => (
+              <li key={index}>{skill}</li>
+            ))}
+          </ul>
+          <p>Percentage: {percentage.toFixed(2)}%</p>
+        </div>
+      )}
     </div>
   );
 };
 
-export default UploadCV;
+export default FileUpload;
