@@ -1,7 +1,5 @@
 import express from 'express';
 import multer from 'multer';
-import synonyms from 'synonyms';
-import fs from 'fs';
 import pdfParser from 'pdf-parse';
 import cors from 'cors';
 
@@ -15,40 +13,27 @@ app.use(express.urlencoded({ extended: true }));
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-const wordSynonyms = synonyms('word');
-console.log(wordSynonyms);
-
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-//=============
-// const fs = require('fs');
-//const pdfParse = require('pdf-parse');
+
 app.get('/test', (req, res) => {
   res.send('Server is working!');
 });
 
 app.post('/upload', upload.single('file'),async (req, res) => {
   console.log(req.file.originalname); 
-  // console.log(file)
   try {
-
    const pdfFilePath = '/home/rchakraborty/Downloads/resume-screening-backend/'+req.file.originalname;
    const fileContent = req.file.buffer;
-  // console.log("fileContent",fileContent.toString());
-  // let readFileSync = fs.readFileSync(req.file.originalname);
+  
    const text = await pdfParser(req.file.buffer);
-  //  const dataBuffer = fs.readFileSync(pdfFilePath);
-  //  const data = await pdfParser(dataBuffer);
   console.log(text.text.toString());
-  // const textArr = text.split(" ")
-  // console.log(textArr)
   } catch (error) {
     console.log(error)
   }
-
 
 const cvData = `
 Java Programming 
