@@ -7,6 +7,8 @@ const FileUpload = () => {
   const [file, setFile] = useState(null);
   const [matchedSkills, setMatchedSkills] = useState([]);
   const [percentage, setPercentage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -14,6 +16,10 @@ const FileUpload = () => {
 
   const handleUpload = async () => {
     console.log('Uploading file...');
+
+    setLoading(true);
+    setError(null);
+
     const formData = new FormData();
     formData.append('file', file);
     try {
@@ -34,15 +40,21 @@ const FileUpload = () => {
     //   console.log('Server Response:', response);
     } catch (error) {
       console.error('Error uploading file:', error);
-    }
+      setError('An error occurred while processing the file.');
+    }finally {
+        setLoading(false);
+      }
   };
 
   return (
     <div>
       <input type="file" onChange={handleFileChange} />
       <Button onClick={handleUpload}>Upload</Button>
+        
+      {loading && <p>Loading...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      {matchedSkills.length > 0 && (
+      {matchedSkills.length > 0 && !loading && !error &&(
         <div>
           <h3>Matched Skills:</h3>
           <ul>
