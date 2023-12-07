@@ -1,10 +1,10 @@
 import React,{useState} from 'react';
 
-const MatchedSkills = ({ skills }) => {
+const MatchedSkills = () => {
     const [matchedSkills, setMatchedSkills] = useState([]);
     const [percentage, setPercentage] = useState(null);
 
-    // const { skills,percentage } = response.data;
+    // const { skills } = response.data;
     //   setMatchedSkills(skills);
     //   setPercentage(percentage);
 
